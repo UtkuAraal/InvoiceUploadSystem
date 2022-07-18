@@ -76,7 +76,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>com.utku.fatura_sistemi/com.utku.fatura_sistemi.HelloApplication</mainClass>
+                            <mainClass>com.utku.fatura_sistemi/com.utku.invoice_upload_system.HelloApplication</mainClass>
                         </configuration>
                     </execution>
                 </executions>

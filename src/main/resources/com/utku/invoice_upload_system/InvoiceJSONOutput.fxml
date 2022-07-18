@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.scene.control.Label?>
+<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.utku.invoice_upload_system.controller.InvoiceJSONOutput">
+    <children>
+        <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+            <children>
+                <ListView fx:id="invoiceInfo" layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="617.0" />
+                <Button fx:id="chooseInvoicebtn" layoutX="552.0" layoutY="244.0" mnemonicParsing="false" onAction="#chooseInvoice" text="Fatura Seç" />
+                <Button layoutX="442.0" layoutY="289.0" mnemonicParsing="false" onAction="#saveForJSON" text="Faturayı JSON Servisi İçin Kaydet" fx:id="jsonSavebtn" />
+                <Button fx:id="closebtn" layoutX="14.0" layoutY="289.0" mnemonicParsing="false" onAction="#close" text="Kapat" />
+                <Label fx:id="successlbl" layoutX="14.0" layoutY="230.0" text="JSON çıktı dosyası başarıyla oluşturuldu !" textFill="green" visible="false"/>
+            </children>
+        </AnchorPane>
+    </children>
+</VBox>
