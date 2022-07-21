@@ -2,9 +2,6 @@ package com.utku.invoice_upload_system.controller;
 
 import com.utku.invoice_upload_system.HelloApplication;
 import com.utku.invoice_upload_system.Statics;
-import com.utku.invoice_upload_system.dataAccess.IDatabaseDal;
-import com.utku.invoice_upload_system.entity.Invoice;
-import com.utku.invoice_upload_system.entity.Customer;
 import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -21,9 +18,6 @@ import java.sql.SQLException;
 
 
 public class DeleteInvoiceController {
-
-    private Invoice choosenInvoice;
-    private Customer customerInformation;
 
     @FXML
     private TextField invoiceSerialTxtField;
@@ -53,15 +47,15 @@ public class DeleteInvoiceController {
 
         }else{
             try{
-                choosenInvoice = Statics.database.findInvoiceBySeriAndNumber(invoiceSerialTxtField.getText(), invoiceNumberTxtField.getText());
-                if(choosenInvoice.getSeri().equals("")){
+                Statics.invoice = Statics.database.findInvoiceBySeriAndNumber(invoiceSerialTxtField.getText(), invoiceNumberTxtField.getText());
+                if(Statics.invoice.getSeri().equals("")){
                     throw new Exception("Fatura bulunamadı!");
                 }
-                customerInformation = Statics.database.getCustomerFromInvoice(choosenInvoice.getCustomerId());
+                Statics.customer = Statics.database.getCustomerFromInvoice(Statics.invoice.getCustomerId());
                 addToScreen();
             }catch (Exception e){
-                choosenInvoice = null;
-                customerInformation = null;
+                Statics.invoice = null;
+                Statics.customer = null;
                 invoiceInfo.getItems().clear();
                 invoiceInfo.getItems().add("Bu seriye ve numaraya ait fatura bulunmamaktadır !");
             }
@@ -72,7 +66,7 @@ public class DeleteInvoiceController {
 
     public void deleteInvoice() throws SQLException {
 
-        if(choosenInvoice == null || customerInformation == null){
+        if(Statics.invoice == null || Statics.customer == null){
             warninglbl.setVisible(true);
             PauseTransition visiblePause = new PauseTransition(
                     Duration.seconds(3)
@@ -83,7 +77,7 @@ public class DeleteInvoiceController {
             visiblePause.play();
 
         }else{
-            Statics.database.deleteInvoice(choosenInvoice.getId());
+            Statics.database.deleteInvoice(Statics.invoice.getId());
 
             successlbl.setVisible(true);
             PauseTransition visiblePause = new PauseTransition(
@@ -94,8 +88,8 @@ public class DeleteInvoiceController {
             );
             visiblePause.play();
             invoiceInfo.getItems().clear();
-            choosenInvoice = null;
-            customerInformation = null;
+            Statics.invoice = null;
+            Statics.customer = null;
         }
     }
 
@@ -105,13 +99,13 @@ public class DeleteInvoiceController {
 
     public void addToScreen(){
         invoiceInfo.getItems().clear();
-        invoiceInfo.getItems().add("Fatura Seri: " + choosenInvoice.getSeri());
-        invoiceInfo.getItems().add("Fatura Numarası: " + choosenInvoice.getNumber());
+        invoiceInfo.getItems().add("Fatura Seri: " + Statics.invoice.getSeri());
+        invoiceInfo.getItems().add("Fatura Numarası: " + Statics.invoice.getNumber());
         invoiceInfo.getItems().add("");
-        invoiceInfo.getItems().add("Müşteri Adı: " + customerInformation.getNameSurname());
-        invoiceInfo.getItems().add("Müşteri TCKN: " + customerInformation.getSsNumber());
+        invoiceInfo.getItems().add("Müşteri Adı: " + Statics.customer.getNameSurname());
+        invoiceInfo.getItems().add("Müşteri TCKN: " + Statics.customer.getSsNumber());
         invoiceInfo.getItems().add("");
-        invoiceInfo.getItems().add("Fatura Tutarı: " + choosenInvoice.getAmountToPay());
+        invoiceInfo.getItems().add("Fatura Tutarı: " + Statics.invoice.getAmountToPay());
     }
 
     private void goToMainMenu(ActionEvent event){

@@ -2,34 +2,19 @@ package com.utku.invoice_upload_system.controller;
 
 import com.utku.invoice_upload_system.HelloApplication;
 import com.utku.invoice_upload_system.Statics;
-import com.utku.invoice_upload_system.dataAccess.IDatabaseDal;
-import com.utku.invoice_upload_system.entity.Invoice;
-import com.utku.invoice_upload_system.entity.OutputItem;
-import com.utku.invoice_upload_system.entity.Customer;
 import com.utku.invoice_upload_system.utils.JsonOutputService;
+import com.utku.invoice_upload_system.view.JsonOutputForms;
 import javafx.animation.PauseTransition;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.util.List;
-
 public class InvoiceJSONOutput {
-
-
-    private Invoice choosenInvoice;
-    private List<OutputItem> items;
-    private Customer customerInformation;
 
     @FXML
     private ListView invoiceInfo;
@@ -40,89 +25,29 @@ public class InvoiceJSONOutput {
     public void chooseInvoice(){
         Dialog dialog = new Dialog();
         dialog.setTitle("Fatura Seçim Ekranı");
-        dialog.getDialogPane().setContent(chooseInvoiceForm());
-        dialog.show();
-    }
-
-    public Node chooseInvoiceForm(){
-        GridPane gridPane = new GridPane();
-        TableView tableView = new TableView();
-
-        TableColumn<Invoice, String> seriCol = new TableColumn<>("Fatura Seri");
-        seriCol.setCellValueFactory(new PropertyValueFactory<>("seri"));
-
-        TableColumn<Invoice, String> numberCol = new TableColumn<>("Fatura Numarası");
-        numberCol.setCellValueFactory(new PropertyValueFactory<>("number"));
-
-        tableView.getColumns().add(seriCol);
-        tableView.getColumns().add(numberCol);
-
-        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-        List<Invoice> invoiceList = Statics.database.getInvoices();
-
-        for (Invoice invoice : invoiceList){
-            tableView.getItems().add(invoice);
+        dialog.getDialogPane().setContent(new JsonOutputForms().chooseInvoiceForm());
+        dialog.showAndWait();
+        if (Statics.invoice != null){
+            addToScreen();
         }
-
-        Button chooseInvoicebtn = new Button("Fatura seç");
-        chooseInvoicebtn.setWrapText(true);
-        chooseInvoicebtn.setDisable(true);
-
-        Button cancelbtn = new Button("Vazgeç");
-        cancelbtn.setWrapText(true);
-
-        TableView.TableViewSelectionModel<Invoice> selectionModel = tableView.getSelectionModel();
-        selectionModel.setSelectionMode(SelectionMode.SINGLE);
-        ObservableList<Invoice> selectedItems = selectionModel.getSelectedItems();
-
-        selectedItems.addListener(new ListChangeListener<Invoice>() {
-            @Override
-            public void onChanged(Change<? extends Invoice> i) {
-                chooseInvoicebtn.setDisable(false);
-            }
-        });
-
-        chooseInvoicebtn.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                choosenInvoice = (Invoice) selectedItems.get(0);
-                ((Node)event.getSource()).getScene().getWindow().hide();
-                items = Statics.database.getInvoiceItems(choosenInvoice.getId());
-                customerInformation = Statics.database.getCustomerFromInvoice(choosenInvoice.getCustomerId());
-                addToScreen();
-            }
-        });
-
-        cancelbtn.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                ((Node)event.getSource()).getScene().getWindow().hide();
-            }
-        });
-
-        gridPane.add(tableView, 0, 0);
-        gridPane.add(cancelbtn, 0, 1);
-        gridPane.add(chooseInvoicebtn, 1, 1);
-        return gridPane;
     }
 
     public void addToScreen(){
         invoiceInfo.getItems().clear();
-        invoiceInfo.getItems().add("Fatura Seri: " + choosenInvoice.getSeri());
-        invoiceInfo.getItems().add("Fatura Numarası: " + choosenInvoice.getNumber());
+        invoiceInfo.getItems().add("Fatura Seri: " + Statics.invoice.getSeri());
+        invoiceInfo.getItems().add("Fatura Numarası: " + Statics.invoice.getNumber());
         invoiceInfo.getItems().add("");
-        invoiceInfo.getItems().add("Müşteri Adı: " + customerInformation.getNameSurname());
-        invoiceInfo.getItems().add("Müşteri TCKN: " + customerInformation.getSsNumber());
+        invoiceInfo.getItems().add("Müşteri Adı: " + Statics.customer.getNameSurname());
+        invoiceInfo.getItems().add("Müşteri TCKN: " + Statics.customer.getSsNumber());
         invoiceInfo.getItems().add("");
-        invoiceInfo.getItems().add("Fatura Tutarı: " + choosenInvoice.getAmountToPay());
+        invoiceInfo.getItems().add("Fatura Tutarı: " + Statics.invoice.getAmountToPay());
     }
 
     public void saveForJSON(ActionEvent event){
-        if(!(choosenInvoice == null)){
+        if(!(Statics.invoice == null)){
             try{
                 JsonOutputService jsonService = new JsonOutputService();
-                jsonService.JSONOutputFile(choosenInvoice, items, customerInformation);
+                jsonService.JSONOutputFile(Statics.invoice, Statics.outputItems, Statics.customer);
 
                 successlbl.setVisible(true);
                 PauseTransition visiblePause = new PauseTransition(
@@ -132,16 +57,14 @@ public class InvoiceJSONOutput {
                         e -> successlbl.setVisible(false)
                 );
                 visiblePause.play();
-                choosenInvoice = null;
-                items = null;
-                customerInformation = null;
+                Statics.invoice = null;
+                Statics.outputItems = null;
+                Statics.customer = null;
                 invoiceInfo.getItems().clear();
             }catch (Exception e){
                 System.out.println(e);
             }
-
         }
-
     }
 
     public void close(ActionEvent event){
@@ -160,7 +83,5 @@ public class InvoiceJSONOutput {
         }catch (Exception e){
             System.out.println(e);
         }
-
     }
-
 }
