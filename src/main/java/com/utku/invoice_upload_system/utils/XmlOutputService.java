@@ -21,7 +21,7 @@ public class XmlOutputService {
 
 
     public void XMLOutputFile(Invoice invoice, List<OutputItem> items, Customer customerInfo){
-        String xmlFilePath = invoice.getNumber() + "xmlfile.xml";
+        String xmlFilePath = "sample_output.xml";
         try {
 
             DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();

@@ -3,13 +3,13 @@ package com.utku.invoice_upload_system.entity;
 public class Item {
     private int id;
     private String name;
-    private int unitPrice;
+    private double unitPrice;
 
     public Item(){
 
     }
 
-    public Item(int id, String name, int unitPrice){
+    public Item(int id, String name, double unitPrice){
         this.id = id;
         this.name = name;
         this.unitPrice = unitPrice;
@@ -32,11 +32,11 @@ public class Item {
         this.name = name;
     }
 
-    public int getUnitPrice() {
+    public double getUnitPrice() {
         return unitPrice;
     }
 
-    public void setUnitPrice(int unitPrice) {
+    public void setUnitPrice(double unitPrice) {
         this.unitPrice = unitPrice;
     }
 }

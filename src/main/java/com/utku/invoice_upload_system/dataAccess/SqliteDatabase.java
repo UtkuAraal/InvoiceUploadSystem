@@ -2,6 +2,7 @@ package com.utku.invoice_upload_system.dataAccess;
 
 import com.utku.invoice_upload_system.entity.*;
 
+import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,50 +12,64 @@ public class SqliteDatabase implements IDatabaseDal{
     public Statement statement;
 
     public SqliteDatabase(){
+        String dbName = "upload_system.db";
         String url = "jdbc:sqlite:upload_system.db";
 
         try{
 
-            databaseLink = DriverManager.getConnection(url);
-            statement = databaseLink.createStatement();
-            String createCustomersql = "CREATE TABLE IF NOT EXISTS `customer` (" +
-                    "`id`INTEGER," +
-                    "`name`TEXT," +
-                    "`ssnNumber`TEXT," +
-                    "PRIMARY KEY(`id`)" +
-                    ")";
 
-            String createInvoicesql = "CREATE TABLE IF NOT EXISTS 'invoice' (" +
-                    "`id`INTEGER," +
-                    "`seri`TEXT," +
-                    "`number`NUMERIC," +
-                    "`totalAmount`TEXT," +
-                    "`discount`TEXT," +
-                    "`amountToPay`TEXT," +
-                    "`customerId`INTEGER," +
-                    "PRIMARY KEY(`id`)" +
-                    ")";
+            File file = new File ("upload_system.db");
 
-            String createInvoiceItemssql = "CREATE TABLE IF NOT EXISTS `invoiceItems` (" +
-                    "`invoiceId`INTEGER," +
-                    "`itemId`INTEGER," +
-                    "`quantity`INTEGER," +
-                    "`amount`INTEGER" +
-                    ")";
+            if(file.exists()) //here's how to check
+            {
+                System.out.println("This database already exists.");
+                databaseLink = DriverManager.getConnection(url);
+                statement = databaseLink.createStatement();
 
-            String createItemsql = "CREATE TABLE IF NOT EXISTS `item` (" +
-                    "`id`INTEGER," +
-                    "`name`TEXT," +
-                    "`unitPrice`TEXT," +
-                    "PRIMARY KEY(`id`)" +
-                    ")";
+            }
+            else{
+                System.out.println("Creating database!");
+                databaseLink = DriverManager.getConnection(url);
+                statement = databaseLink.createStatement();
+                String createCustomersql = "CREATE TABLE `customer` (" +
+                        "`id`INTEGER," +
+                        "`name`TEXT," +
+                        "`ssnNumber`TEXT," +
+                        "PRIMARY KEY(`id`)" +
+                        ")";
 
-            statement.executeUpdate(createCustomersql);
-            statement.executeUpdate(createInvoicesql);
-            statement.executeUpdate(createInvoiceItemssql);
-            statement.executeUpdate(createItemsql);
-            statement.close();
+                String createInvoicesql = "CREATE TABLE 'invoice' (" +
+                        "`id`INTEGER," +
+                        "`seri`TEXT," +
+                        "`number`NUMERIC," +
+                        "`totalAmount`TEXT," +
+                        "`discount`TEXT," +
+                        "`amountToPay`TEXT," +
+                        "`customerId`INTEGER," +
+                        "PRIMARY KEY(`id`)" +
+                        ")";
 
+                String createInvoiceItemssql = "CREATE TABLE `invoiceItems` (" +
+                        "`invoiceId`INTEGER," +
+                        "`itemId`INTEGER," +
+                        "`quantity`INTEGER," +
+                        "`amount`TEXT" +
+                        ")";
+
+                String createItemsql = "CREATE TABLE `item` (" +
+                        "`id`INTEGER," +
+                        "`name`TEXT," +
+                        "`unitPrice`TEXT," +
+                        "PRIMARY KEY(`id`)" +
+                        ")";
+
+                statement.executeUpdate(createCustomersql);
+                statement.executeUpdate(createInvoicesql);
+                statement.executeUpdate(createInvoiceItemssql);
+                statement.executeUpdate(createItemsql);
+                statement.close();
+
+            }
             System.out.println("Connected");
 
         }catch (Exception e){
@@ -94,10 +109,10 @@ public class SqliteDatabase implements IDatabaseDal{
     }
 
     public Customer addNewCustomer(String nameSurname, String ssNumber){
-        int generatedKey = 0;
+
         try{
             String sql = "INSERT INTO customer (name, ssnNumber) VALUES(?, ?)";
-
+            int generatedKey = 0;
 
             PreparedStatement ps = null;
             ps = databaseLink.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -108,12 +123,13 @@ public class SqliteDatabase implements IDatabaseDal{
             if (rs.next()) {
                 generatedKey = rs.getInt(1);
             }
+            return new Customer(generatedKey, nameSurname, ssNumber);
+
         }catch (Exception e){
             e.printStackTrace();
         }
 
-
-        return new Customer(generatedKey, nameSurname, ssNumber);
+        return null;
 
     }
 
@@ -132,7 +148,7 @@ public class SqliteDatabase implements IDatabaseDal{
                 String name = rs.getString("name");
                 item.setName(name);
                 String unitPrice = rs.getString("unitPrice");
-                item.setUnitPrice(Integer.parseInt(unitPrice));
+                item.setUnitPrice(Double.parseDouble(unitPrice));
                 itemList.add(item);
 
             }
@@ -186,7 +202,7 @@ public class SqliteDatabase implements IDatabaseDal{
                 ps.setInt(1, generatedKey);
                 ps.setInt(2, invoiceItem.getItemId());
                 ps.setInt(3, invoiceItem.getQuantity());
-                ps.setInt(4, invoiceItem.getAmount());
+                ps.setString(4, String.valueOf(invoiceItem.getAmount()));
                 ps.execute();
             }
 
@@ -215,11 +231,11 @@ public class SqliteDatabase implements IDatabaseDal{
                 String number = rs.getString("number");
                 invoice.setNumber(number);
                 String totalAmount = rs.getString("totalAmount");
-                invoice.setTotalAmount(Integer.parseInt(totalAmount));
+                invoice.setTotalAmount(Double.parseDouble(totalAmount));
                 String discount = rs.getString("discount");
-                invoice.setDiscount(Integer.parseInt(discount));
+                invoice.setDiscount(Double.parseDouble(discount));
                 String amountToPay = rs.getString("amountToPay");
-                invoice.setAmountToPay(Integer.parseInt(amountToPay));
+                invoice.setAmountToPay(Double.parseDouble(amountToPay));
                 int customerId = rs.getInt("customerId");
                 invoice.setCustomerId(customerId);
                 invoiceList.add(invoice);
@@ -252,7 +268,7 @@ public class SqliteDatabase implements IDatabaseDal{
                 item.setUnitPrice(unitPrice);
                 int quantity = rs.getInt("quantity");
                 item.setQuantity(quantity);
-                int amount = rs.getInt("amount");
+                double amount = rs.getDouble("amount");
                 item.setAmount(amount);
                 itemList.add(item);
 
@@ -307,11 +323,11 @@ public class SqliteDatabase implements IDatabaseDal{
                 String numberNo = rs.getString("number");
                 invoice.setNumber(numberNo);
                 String totalAmount = rs.getString("totalAmount");
-                invoice.setTotalAmount(Integer.parseInt(totalAmount));
+                invoice.setTotalAmount(Double.parseDouble(totalAmount));
                 String discount = rs.getString("discount");
-                invoice.setDiscount(Integer.parseInt(discount));
+                invoice.setDiscount(Double.parseDouble(discount));
                 String amountToPay = rs.getString("amountToPay");
-                invoice.setAmountToPay(Integer.parseInt(amountToPay));
+                invoice.setAmountToPay(Double.parseDouble(amountToPay));
                 int customerId = rs.getInt("customerId");
                 invoice.setCustomerId(customerId);
             }

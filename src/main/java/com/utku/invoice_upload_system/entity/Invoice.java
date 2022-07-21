@@ -4,15 +4,15 @@ public class Invoice {
     private int id;
     private String seri;
     private String number;
-    private int totalAmount;
-    private int discount;
-    private int amountToPay;
+    private double totalAmount;
+    private double discount;
+    private double amountToPay;
     private int customerId;
 
     public Invoice() {
     }
 
-    public Invoice(int id, String seri, String number, int totalAmount, int discount, int amountToPay, int customerId) {
+    public Invoice(int id, String seri, String number, double totalAmount, double discount, double amountToPay, int customerId) {
         this.id = id;
         this.seri = seri;
         this.number = number;
@@ -46,27 +46,27 @@ public class Invoice {
         this.number = number;
     }
 
-    public int getTotalAmount() {
+    public double getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(int totalAmount) {
+    public void setTotalAmount(double totalAmount) {
         this.totalAmount = totalAmount;
     }
 
-    public int getDiscount() {
+    public double getDiscount() {
         return discount;
     }
 
-    public void setDiscount(int discount) {
+    public void setDiscount(double discount) {
         this.discount = discount;
     }
 
-    public int getAmountToPay() {
+    public double getAmountToPay() {
         return amountToPay;
     }
 
-    public void setAmountToPay(int amountToPay) {
+    public void setAmountToPay(double amountToPay) {
         this.amountToPay = amountToPay;
     }
 

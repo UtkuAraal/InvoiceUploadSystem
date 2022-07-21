@@ -1,6 +1,7 @@
 package com.utku.invoice_upload_system.controller;
 
 import com.utku.invoice_upload_system.HelloApplication;
+import com.utku.invoice_upload_system.Statics;
 import com.utku.invoice_upload_system.dataAccess.IDatabaseDal;
 import com.utku.invoice_upload_system.entity.*;
 import javafx.beans.value.ChangeListener;
@@ -30,8 +31,6 @@ import java.util.ResourceBundle;
 public class CreateInvoiceController implements Initializable{
 
 
-    private IDatabaseDal database = HelloApplication.database;
-
     private Invoice invoice = new Invoice();
     private Customer choosenCustomer = null;
     private List<InvoiceItems> invoiceItemsList = new ArrayList<>();
@@ -52,13 +51,13 @@ public class CreateInvoiceController implements Initializable{
     private TableColumn<CartItem, String> itemName = new TableColumn<>();
 
     @FXML
-    private TableColumn<CartItem, Integer> itemUnitPrice = new TableColumn<>();
+    private TableColumn<CartItem, Double> itemUnitPrice = new TableColumn<>();
 
     @FXML
     private TableColumn<CartItem, Integer> itemQuantity = new TableColumn<>();
 
     @FXML
-    private TableColumn<CartItem, Integer> itemAmount = new TableColumn<>();
+    private TableColumn<CartItem, Double> itemAmount = new TableColumn<>();
 
     @FXML
     private TextField discountAmount;
@@ -79,6 +78,7 @@ public class CreateInvoiceController implements Initializable{
         dialog.getDialogPane().setContent(chooseCustomerForm());
         dialog.show();
 
+
     }
 
     private Node chooseCustomerForm() throws SQLException {
@@ -96,7 +96,7 @@ public class CreateInvoiceController implements Initializable{
 
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        List<Customer> customerList = database.getCustomers();
+        List<Customer> customerList = Statics.database.getCustomers();
 
         for (Customer custom : customerList){
             tableView.getItems().add(custom);
@@ -182,7 +182,7 @@ public class CreateInvoiceController implements Initializable{
             public void handle(ActionEvent event) {
                 if(!(nameTxtField.getText().equals("") || ssNumberTxtField.getText().equals(""))){
                     try {
-                        Customer newCustomer = database.addNewCustomer(nameTxtField.getText(), ssNumberTxtField.getText());
+                        Customer newCustomer = Statics.database.addNewCustomer(nameTxtField.getText(), ssNumberTxtField.getText());
                         choosenCustomer = newCustomer;
                         ((Node)event.getSource()).getScene().getWindow().hide();
                         customerInfo.getItems().clear();
@@ -213,15 +213,19 @@ public class CreateInvoiceController implements Initializable{
 
     public void calculateInvoice(){
         if(!(discountAmount.getText().equals(""))){
-            int discount = Integer.parseInt(discountAmount.getText());
-            int total = 0;
+            double discount = Double.parseDouble(discountAmount.getText());
+            double total = 0;
             for(InvoiceItems item : invoiceItemsList){
                 total += item.getAmount();
             }
+
+            String totalFormat = Statics.decimalFormat.format(total).replace(",",".");
+            total = Double.parseDouble(totalFormat);
             if (discount > total){
                 return;
             }
-            int amountToPay = total - discount;
+            double amountToPay = total - discount;
+
 
             invoice.setTotalAmount(total);
             invoice.setDiscount(discount);
@@ -248,7 +252,7 @@ public class CreateInvoiceController implements Initializable{
         TableColumn<Item, String> nameCol = new TableColumn<>("Adı");
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
 
-        TableColumn<Item, Integer> unitPriceCol = new TableColumn<>("Unit Price");
+        TableColumn<Item, Double> unitPriceCol = new TableColumn<>("Unit Price");
         unitPriceCol.setCellValueFactory(new PropertyValueFactory<>("unitPrice"));
 
         tableView.getColumns().add(nameCol);
@@ -256,7 +260,7 @@ public class CreateInvoiceController implements Initializable{
 
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        List<Item> itemList = database.getItems();
+        List<Item> itemList = Statics.database.getItems();
 
         for (Item item : itemList){
             tableView.getItems().add(item);
@@ -310,15 +314,18 @@ public class CreateInvoiceController implements Initializable{
                 if(quantityTxtField.getText().equals("")){
                     requirelbl.setVisible(true);
                 }else{
+
                     Item item = (Item) selectedItems.get(0);
                     InvoiceItems invoiceItems = new InvoiceItems();
                     invoiceItems.setItemId(item.getId());
                     invoiceItems.setQuantity(Integer.parseInt(quantityTxtField.getText()));
-                    invoiceItems.setAmount(Integer.parseInt(quantityTxtField.getText()) * item.getUnitPrice());
+                    String amountFormat = Statics.decimalFormat.format((Integer.parseInt(quantityTxtField.getText()) * item.getUnitPrice())).replace(",",".");
+                    double amount = Double.valueOf(amountFormat);
+                    invoiceItems.setAmount(amount);
                     invoiceItemsList.add(invoiceItems);
                     ((Node)event.getSource()).getScene().getWindow().hide();
 
-                    CartItem cartItem = new CartItem(item.getName(), item.getUnitPrice(), Integer.parseInt(quantityTxtField.getText()), Integer.parseInt(quantityTxtField.getText()) * item.getUnitPrice());
+                    CartItem cartItem = new CartItem(item.getName(), item.getUnitPrice(), Integer.parseInt(quantityTxtField.getText()), amount);
                     cart.getItems().add(cartItem);
                 }
 
@@ -363,16 +370,6 @@ public class CreateInvoiceController implements Initializable{
         TextField nameTxtField = new TextField();
         TextField unitPriceTxtField = new TextField();
 
-        unitPriceTxtField.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue,
-                                String newValue) {
-                if (!newValue.matches("\\d*")) {
-                    unitPriceTxtField.setText(newValue.replaceAll("[^\\d]", ""));
-                }
-            }
-        });
-
         gridPane.add(nameTxtField, 1, 0);
         gridPane.add(unitPriceTxtField, 1, 1);
 
@@ -386,7 +383,7 @@ public class CreateInvoiceController implements Initializable{
             @Override
             public void handle(ActionEvent event) {
                 try {
-                    database.addNewItem(nameTxtField.getText(), unitPriceTxtField.getText());
+                    Statics.database.addNewItem(nameTxtField.getText(), unitPriceTxtField.getText());
                     ((Node)event.getSource()).getScene().getWindow().hide();
                     Dialog dialog = new Dialog();
                     dialog.setTitle("Ürün Seçim Formu");
@@ -437,7 +434,7 @@ public class CreateInvoiceController implements Initializable{
             invoice.setSeri(invoiceSerial.getText());
             invoice.setNumber(invoiceNumber.getText());
             invoice.setCustomerId(choosenCustomer.getId());
-            database.addInvoice(invoice, invoiceItemsList);
+            Statics.database.addInvoice(invoice, invoiceItemsList);
             goToMainMenu(event);
         }
     }
@@ -447,20 +444,9 @@ public class CreateInvoiceController implements Initializable{
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         itemName.setCellValueFactory(new PropertyValueFactory<CartItem, String>("name"));
-        itemUnitPrice.setCellValueFactory(new PropertyValueFactory<CartItem, Integer>("unitPrice"));
+        itemUnitPrice.setCellValueFactory(new PropertyValueFactory<CartItem, Double>("unitPrice"));
         itemQuantity.setCellValueFactory(new PropertyValueFactory<CartItem, Integer>("quantity"));
-        itemAmount.setCellValueFactory(new PropertyValueFactory<CartItem, Integer>("amount"));
-
-
-        discountAmount.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue,
-                                String newValue) {
-                if (!newValue.matches("\\d*")) {
-                    discountAmount.setText(newValue.replaceAll("[^\\d]", ""));
-                }
-            }
-        });
+        itemAmount.setCellValueFactory(new PropertyValueFactory<CartItem, Double>("amount"));
     }
 
 

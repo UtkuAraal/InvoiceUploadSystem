@@ -1,6 +1,7 @@
 package com.utku.invoice_upload_system.controller;
 
 import com.utku.invoice_upload_system.HelloApplication;
+import com.utku.invoice_upload_system.Statics;
 import com.utku.invoice_upload_system.dataAccess.IDatabaseDal;
 import com.utku.invoice_upload_system.entity.Invoice;
 import com.utku.invoice_upload_system.entity.OutputItem;
@@ -24,7 +25,7 @@ import javafx.util.Duration;
 import java.util.List;
 
 public class InvoiceJSONOutput {
-    private IDatabaseDal database = HelloApplication.database;
+
 
     private Invoice choosenInvoice;
     private List<OutputItem> items;
@@ -58,7 +59,7 @@ public class InvoiceJSONOutput {
 
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        List<Invoice> invoiceList = database.getInvoices();
+        List<Invoice> invoiceList = Statics.database.getInvoices();
 
         for (Invoice invoice : invoiceList){
             tableView.getItems().add(invoice);
@@ -87,8 +88,8 @@ public class InvoiceJSONOutput {
             public void handle(ActionEvent event) {
                 choosenInvoice = (Invoice) selectedItems.get(0);
                 ((Node)event.getSource()).getScene().getWindow().hide();
-                items = database.getInvoiceItems(choosenInvoice.getId());
-                customerInformation = database.getCustomerFromInvoice(choosenInvoice.getCustomerId());
+                items = Statics.database.getInvoiceItems(choosenInvoice.getId());
+                customerInformation = Statics.database.getCustomerFromInvoice(choosenInvoice.getCustomerId());
                 addToScreen();
             }
         });

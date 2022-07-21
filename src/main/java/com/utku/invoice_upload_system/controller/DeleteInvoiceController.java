@@ -1,6 +1,7 @@
 package com.utku.invoice_upload_system.controller;
 
 import com.utku.invoice_upload_system.HelloApplication;
+import com.utku.invoice_upload_system.Statics;
 import com.utku.invoice_upload_system.dataAccess.IDatabaseDal;
 import com.utku.invoice_upload_system.entity.Invoice;
 import com.utku.invoice_upload_system.entity.Customer;
@@ -20,8 +21,6 @@ import java.sql.SQLException;
 
 
 public class DeleteInvoiceController {
-
-    private IDatabaseDal database = HelloApplication.database;
 
     private Invoice choosenInvoice;
     private Customer customerInformation;
@@ -54,11 +53,11 @@ public class DeleteInvoiceController {
 
         }else{
             try{
-                choosenInvoice = database.findInvoiceBySeriAndNumber(invoiceSerialTxtField.getText(), invoiceNumberTxtField.getText());
+                choosenInvoice = Statics.database.findInvoiceBySeriAndNumber(invoiceSerialTxtField.getText(), invoiceNumberTxtField.getText());
                 if(choosenInvoice.getSeri().equals("")){
                     throw new Exception("Fatura bulunamadı!");
                 }
-                customerInformation = database.getCustomerFromInvoice(choosenInvoice.getId());
+                customerInformation = Statics.database.getCustomerFromInvoice(choosenInvoice.getCustomerId());
                 addToScreen();
             }catch (Exception e){
                 choosenInvoice = null;
@@ -84,7 +83,7 @@ public class DeleteInvoiceController {
             visiblePause.play();
 
         }else{
-            database.deleteInvoice(choosenInvoice.getId());
+            Statics.database.deleteInvoice(choosenInvoice.getId());
 
             successlbl.setVisible(true);
             PauseTransition visiblePause = new PauseTransition(

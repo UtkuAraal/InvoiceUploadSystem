@@ -33,7 +33,7 @@ public class JsonOutputService {
             JSONObject invoiceItem = new JSONObject();
             invoiceItem.put("name", item.getName());
             invoiceItem.put("quantity", item.getQuantity());
-            invoiceItem.put("unitPrice", Integer.parseInt(item.getUnitPrice()));
+            invoiceItem.put("unitPrice", Double.parseDouble(item.getUnitPrice()));
             invoiceItem.put("amount", item.getAmount());
             invoiceItems.add(invoiceItem);
         }
@@ -48,7 +48,7 @@ public class JsonOutputService {
         uploadSystem.put("invoiceData" ,invoiceData);
         jsonObject.put("uploadSystem", uploadSystem);
 
-        FileWriter file = new FileWriter(invoice.getNumber() + "jsonfile.json");
+        FileWriter file = new FileWriter("sample_output.json");
         file.write(jsonObject.toJSONString());
         file.close();
     }

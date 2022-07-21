@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public class HelloApplication extends Application {
 
-    public static IDatabaseDal database;
+
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -23,9 +23,7 @@ public class HelloApplication extends Application {
     }
 
     public static void main(String[] args){
-
-        database = new SqliteDatabase();
-
+        Statics statics = new Statics();
         launch();
     }
 }

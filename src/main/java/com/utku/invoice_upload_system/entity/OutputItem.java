@@ -4,7 +4,7 @@ public class OutputItem {
     private String name;
     private String unitPrice;
     private int quantity;
-    private int amount;
+    private double amount;
 
     public String getName() {
         return name;
@@ -30,15 +30,15 @@ public class OutputItem {
         this.quantity = quantity;
     }
 
-    public int getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 
-    public OutputItem(String name, String unitPrice, int quantity, int amount) {
+    public OutputItem(String name, String unitPrice, int quantity, double amount) {
         this.name = name;
         this.unitPrice = unitPrice;
         this.quantity = quantity;

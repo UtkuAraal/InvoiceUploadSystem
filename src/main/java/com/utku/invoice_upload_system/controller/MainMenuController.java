@@ -1,6 +1,7 @@
 package com.utku.invoice_upload_system.controller;
 
 import com.utku.invoice_upload_system.HelloApplication;
+import com.utku.invoice_upload_system.Statics;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -53,7 +54,7 @@ public class MainMenuController {
     }
 
     public void exit(){
-        HelloApplication.database.closeDatabase();
+        Statics.database.closeDatabase();
         Platform.exit();
     }
 

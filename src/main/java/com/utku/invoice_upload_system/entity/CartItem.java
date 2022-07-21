@@ -1,22 +1,23 @@
 package com.utku.invoice_upload_system.entity;
 
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 public class CartItem {
     private SimpleStringProperty name;
-    private SimpleIntegerProperty unitPrice;
+    private SimpleDoubleProperty unitPrice;
     private SimpleIntegerProperty quantity;
-    private SimpleIntegerProperty amount;
+    private SimpleDoubleProperty amount;
 
     public CartItem() {
     }
 
-    public CartItem(String name, int unitPrice, int quantity, int amount) {
+    public CartItem(String name, double unitPrice, int quantity, double amount) {
         this.name = new SimpleStringProperty(name);
-        this.unitPrice = new SimpleIntegerProperty(unitPrice);
+        this.unitPrice = new SimpleDoubleProperty(unitPrice);
         this.quantity = new SimpleIntegerProperty(quantity);
-        this.amount = new SimpleIntegerProperty(amount);
+        this.amount = new SimpleDoubleProperty (amount);
     }
 
     public String getName() {
@@ -31,15 +32,15 @@ public class CartItem {
         this.name.set(name);
     }
 
-    public int getUnitPrice() {
+    public double getUnitPrice() {
         return unitPrice.get();
     }
 
-    public SimpleIntegerProperty unitPriceProperty() {
+    public SimpleDoubleProperty unitPriceProperty() {
         return unitPrice;
     }
 
-    public void setUnitPrice(int unitPrice) {
+    public void setUnitPrice(double unitPrice) {
         this.unitPrice.set(unitPrice);
     }
 
@@ -55,15 +56,15 @@ public class CartItem {
         this.quantity.set(quantity);
     }
 
-    public int getAmount() {
+    public double getAmount() {
         return amount.get();
     }
 
-    public SimpleIntegerProperty amountProperty() {
+    public SimpleDoubleProperty  amountProperty() {
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(double amount) {
         this.amount.set(amount);
     }
 }

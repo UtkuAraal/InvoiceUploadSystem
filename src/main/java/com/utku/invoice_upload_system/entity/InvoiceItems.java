@@ -4,12 +4,12 @@ public class InvoiceItems {
     private int invoiceId;
     private int itemId;
     private int quantity;
-    private int amount;
+    private double amount;
 
     public InvoiceItems() {
     }
 
-    public InvoiceItems(int invoiceId, int itemId, int quantity, int amount) {
+    public InvoiceItems(int invoiceId, int itemId, int quantity, double amount) {
         this.invoiceId = invoiceId;
         this.itemId = itemId;
         this.quantity = quantity;
@@ -40,11 +40,11 @@ public class InvoiceItems {
         this.quantity = quantity;
     }
 
-    public int getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 }
