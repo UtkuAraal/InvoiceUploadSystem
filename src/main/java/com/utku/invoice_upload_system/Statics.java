@@ -16,4 +16,6 @@ public class Statics {
     public static List<InvoiceItems> invoiceItemsList = new ArrayList<>();
     public static CartItem cartItem = null;
     public static List<OutputItem> outputItems = null;
+    public static String Type;
+    public static String Value;
 }

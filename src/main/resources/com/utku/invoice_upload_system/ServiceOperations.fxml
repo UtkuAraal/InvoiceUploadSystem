@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.scene.control.TextArea?>
+<VBox prefHeight="469.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.utku.invoice_upload_system.controller.ServiceOperationsController">
+    <children>
+        <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+            <children>
+                <Label fx:id="httpUrllbl" layoutX="131.0" layoutY="11.0" text="HTTP" />
+                <Label fx:id="tcplbl" layoutX="501.0" layoutY="11.0" text="TCP" />
+                <TextField fx:id="httpUrl" layoutX="20.0" layoutY="38.0" prefHeight="26.0" prefWidth="249.0" promptText="URL" />
+                <TextField fx:id="tcpIp" layoutX="362.0" layoutY="38.0" promptText="Ip" />
+                <TextField fx:id="tcpPort" layoutX="523.0" layoutY="38.0" prefHeight="26.0" prefWidth="85.0" promptText="Port" />
+                <Button fx:id="queryInvoicebtn" layoutX="196.0" layoutY="115.0" mnemonicParsing="false" text="Fatura Sorgula" onAction="#queryInvoice"/>
+                <Button fx:id="uploadInvoicebtn" layoutX="327.0" layoutY="115.0" mnemonicParsing="false" text="Fatura Gönder" onAction="#uploadInvoice"/>
+                <TextArea layoutX="20.0" layoutY="192.0" prefHeight="200.0" prefWidth="588.0" fx:id="responseView" editable="false"/>
+                <Label layoutX="20.0" layoutY="165.0" text="Server Cevabı" fx:id="responselbl"/>
+                <Label  fx:id="warninglbl" layoutX="20.0" layoutY="399.0" text="Server bilgisi boş bırakılamaz veya birden fazla seçilemez!" textFill="RED" visible="false"/>
+                <Label layoutX="21.0" layoutY="408.0" text="Server bilgisi boş bırakılamaz veya birden fazla seçilemez!" textFill="RED" />
+                <Button layoutX="544.0" layoutY="404.0" mnemonicParsing="false" text="Ana Menü" fx:id="cancelbtn" onAction="#mainMenu"/>
+            </children>
+        </AnchorPane>
+    </children>
+</VBox>

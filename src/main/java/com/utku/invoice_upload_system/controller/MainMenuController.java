@@ -66,6 +66,16 @@ public class MainMenuController {
         stage.show();
     }
 
+    public void service(ActionEvent event) throws IOException {
+        ((Node)event.getSource()).getScene().getWindow().hide();
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("ServiceOperations.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 640, 448);
+        Stage stage = new Stage();
+        stage.setTitle("Servis İşlemleri");
+        stage.setScene(scene);
+        stage.show();
+    }
+
     public void exit(){
         Statics.database.closeDatabase();
         Platform.exit();

@@ -3,6 +3,7 @@ module com.utku.invoice_upload_system {
     requires javafx.fxml;
     requires java.sql;
     requires json.simple;
+    requires okhttp3;
 
 
     opens com.utku.invoice_upload_system to javafx.fxml;
